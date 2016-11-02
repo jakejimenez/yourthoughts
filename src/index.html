@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>YourThoughts 💡</title>
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="./assets/stylesheets/skeleton.css" />
+  <link rel="stylesheet" href="./assets/stylesheets/style.css" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/ico" href="./assets/images/logo.ico" />
+
+</head>
+<body>
+
+  <div id="root">
+    <div class="container">
+      <div class="row">
+        <div class="four columns">
+          <p></p>
+        </div>
+        <div class="four columns">
+          <div style="margin: 0 auto; margin-top: 50%">
+            <h3 align="center"><span style="font-family: 'CircularStdBold', sans-serif; color: lightblue; text-shadow: 1px 0 0">Your</span><span style="font-family: 'CircularStdBold', sans-serif; color: lightgreen; text-shadow: 1px 10 2">Thoughts</span> 💡</h3>
+            <input class="u-full-width" type="email" placeholder="#ID" id="exampleEmailInput">
+            <div class="row">
+              <div class="six columns">
+                <input id="navToId" class="button-primary u-full-width" type="submit" value="Enter">
+              </div>
+              <div class="six columns">
+                <input id="createNewThought" class="button-primary u-full-width" type="submit" value="Create">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="four columns">
+          <p></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Javascript -->
+  <script src="./assets/javascript/firebase.min.js"></script>
+  <script src="./assets/javascript/cookies.min.js"></script>
+  <script src="./assets/javascript/vue.min.js"></script>
+  <script src="./assets/javascript/main.js"></script>
+
+</body>
+</html>
