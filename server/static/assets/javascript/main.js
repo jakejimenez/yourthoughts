@@ -10,8 +10,16 @@ var config = {
  var db = firebase.database();
 
  onload = function() {
-   var url = document.url;
-   console.log(url)
+   var url = window.location.href.split('?=');
+   db.ref('thoughts/'+url[1]).once('value', function(snapshot) {
+     if (snapshot.hasChild('title')) {
+       notie.alert(1, 'Success!' , 2)
+       document.getElementById('mainView').innerHTML = '';
+       document.getElementById('mainView').innerHTML += '<h1 style="text-align: center; font-family:"CircularStdBold", sans-serif;" class="u-full-width" id="postkey">'+snapshot.key+'</h1>';
+       document.getElementById('mainView').innerHTML += '<input class="u-full-width" type="text" value="'+snapshot.val().title+'" id="postTitle">'
+       document.getElementById('mainView').innerHTML += '<textarea class="u-full-width" type="text" value="'+snapshot.val().post+'" id="post">'
+     }
+   });
  }
 
 // Vue
