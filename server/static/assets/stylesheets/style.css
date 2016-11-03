@@ -18,7 +18,6 @@ body {
   animation: background 10s cubic-bezier(1,0,0,1) infinite;
 }
 
-
 @-webkit-keyframes background {
   0% { background-color: #f99; }
   33% { background-color: #9f9; }

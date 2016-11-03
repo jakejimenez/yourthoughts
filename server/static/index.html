@@ -18,14 +18,14 @@
 
   <div id="root">
     <div class="container">
-      <div class="row">
+      <div id="mainView" class="row">
         <div class="four columns">
           <p></p>
         </div>
         <div class="four columns">
-          <div id="mainView" style="margin: 0 auto; margin-top: 50%">
+          <div style="margin: 0 auto; margin-top: 50%">
             <h3 align="center"><span style="font-family: 'CircularStdBold', sans-serif; color: #E53935; text-shadow: 1px 0 0">Your</span><span style="font-family: 'CircularStdBold', sans-serif; color: #0D47A1; text-shadow: 1px 10 2">Thoughts</span> 💡</h3>
-            <input style="font-family: 'CircularStdBook', sans-serif;" class="u-full-width" type="email" v-model="thoughtId" placeholder="#ID" id="thoughtId">
+            <input style="font-family: 'CircularStdBook', sans-serif; font-size: 30px" class="u-full-width" type="email" v-model="thoughtId" placeholder="#ID" id="thoughtId">
             <div class="row">
               <div class="six columns">
                 <input id="navToId" style="background-color: #FF1744; border-color: #FF1744;" v-on:click="joinThought" class="button-primary u-full-width" type="submit" value="Enter">
