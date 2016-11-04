@@ -149,6 +149,11 @@ class MainView extends Component {
             )
       } else {
         Cookies.set('thoughtId', thoughtId);
+        /*db.ref('users/'+Cookies.get('uid')).once('value', function(snapshot) {
+          if (snapshot.hasChild('name')) {
+            Cookies.set('vanityName', snapshot.val().name)
+          }
+        })*/
         db.ref('thoughts/'+thoughtId).set({
           title: '',
           titleCanBeChanged: true,
