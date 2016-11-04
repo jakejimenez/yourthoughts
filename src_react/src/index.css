@@ -1,0 +1,78 @@
+/* FONTS */
+@font-face {
+  font-family: "CircularStdBook";
+  src: url("../public/fonts/CircularStd-Book.otf");
+}
+@font-face {
+  font-family: "CircularStdBold";
+  src: url("../public/fonts/CircularStd-Bold.otf");
+}
+html,
+body {
+  height: 100%;
+}
+
+body {
+  -webkit-animation: background 10s cubic-bezier(1,0,0,1) infinite;
+  animation: background 10s cubic-bezier(1,0,0,1) infinite;
+}
+
+.middlediv {
+  margin: 0 auto;
+  margin-top: 10%;
+}
+
+.middlediv-title {
+  text-align: center;
+  font-family: "CircularStdBold", sans-serif;
+  font-size: 30px;
+}
+.title-thoughtview {
+  text-align: center;
+  font-family: "CircularStdBold", sans-serif;
+  font-size: 25px;
+}
+.author {
+  text-align: center;
+  font-family: "CircularStdBold", sans-serif;
+  font-size: 20px;
+}
+
+.first-part-title {
+  color: #E53935;
+  text-shadow: 1px 0 0;
+}
+
+.second-part-title {
+  color: #0D47A1;
+  text-shadow: 1px 0 0;
+}
+
+.id-input {
+  font-family: 'CircularStdBook', sans-serif;
+  font-size: 30px;
+}
+
+.navToId-button {
+  background-color: #FF1744 !important;
+  border-color: #FF1744 !important;
+}
+
+.createNewThought-button {
+  background-color: #0D47A1 !important;
+  border-color: #0D47A1 !important;
+}
+
+@-webkit-keyframes background {
+  0% { background-color: #f99; }
+  33% { background-color: #9f9; }
+  67% { background-color: #99f; }
+  100% { background-color: #f99; }
+}
+
+@keyframes background {
+  0% { background-color: #f99; }
+  33% { background-color: #9f9; }
+  67% { background-color: #99f; }
+  100% { background-color: #f99; }
+}
