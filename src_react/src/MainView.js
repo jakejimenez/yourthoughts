@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
-import './index.css';
+import './style.css';
+
+// Make sure these paths are correct.
 import './skeleton.min.css';
 import './sweetalert2.min.css';
 
 // Import npm modules
 import * as firebase from 'firebase';
 import * as Cookies from 'js-cookie';
-import { default as swal } from 'sweetalert2'
+import { default as swal } from 'sweetalert2';
 
 // Setup
 var config = {
@@ -31,6 +33,7 @@ function makeid()
     return text;
 }
 
+// Setup
 if (Cookies.get('uid') === null || Cookies.get('uid') === undefined || Cookies.get('uid') == null || Cookies.get('uid') === '') {
   Cookies.set('uid', makeid());
   console.log(Cookies.get('uid'))
@@ -48,35 +51,101 @@ if (Cookies.get('uid') === null || Cookies.get('uid') === undefined || Cookies.g
      this.state = {
        thoughtId: '',
        thoughtPost: '',
-       thoughtAuthor: ''
+       thoughtAuthor: '',
+       updatedPost: ''
      }
+
+     this.handleChange = this.handleChange.bind(this);
+     this.changePost = this.changePost.bind(this);
    }
 
    handleChange() {
-
+     var textareaPost = document.getElementById('thoughtPost').value;
+     this.setState({updatedPost: textareaPost});
    }
 
-   changeThought() {
-
+   changePost() {
+     var self = this;
+     db.ref('thoughts/'+self.props.thoughtIdPiped).once('value', (snapshot) => {
+       if (snapshot.hasChild('post')) {
+         db.ref('thoughts/'+self.props.thoughtIdPiped+'/post').set(self.state.updatedPost)
+       } else {
+         swal(
+             'Awww!',
+             'Some sort of error occured.',
+             'error'
+             )
+       }
+     })
    }
 
    componentWillMount () {
      console.log('DOM will load...')
+
+     // Check if vanity name is active.
+     var self = this;
+     db.ref('users/'+Cookies.get('uid')).once('value', (snapshot) => {
+       if (snapshot.hasChild('name')) {
+         self.setState({
+           vanityName: snapshot.val().name
+         })
+       } else {
+         vanityName: 'This user has no username.'
+       }
+     })
+
+     db.ref('thoughts/'+self.props.thoughtIdPiped).once('value', (snapshot) => {
+       if (snapshot.hasChild('post')) {
+         self.setState({
+           thoughtPost: snapshot.val().post
+         })
+       } else {
+         self.setState({
+           thoughtPost: 'This post has no content...'
+         })
+       }
+
+       if (snapshot.hasChild('author')) {
+         self.setState({
+           thoughtAuthor: snapshot.val().author
+         })
+       }
+     })
    }
 
    render() {
-     return (
-       <div className="container">
-         <div className="row">
-           <div className="four columns"><p></p></div>
-           <div className="four columns middlediv">
-             <h3 className="title-thoughtview">{this.props.thoughtIdPiped}</h3>
-             <h4 className="author">by {this.props.thoughtAuthorPiped}</h4>
+
+     if (this.state.thoughtAuthor === Cookies.get('uid')) {
+       // Render thought view.
+       return (
+         <div className="container">
+           <div className="row">
+             <div className="six columns middlediv">
+               <h3 className="title-thoughtview">{this.props.thoughtIdPiped}</h3>
+               <h4 className="author">by {this.state.vanityName} ({this.props.thoughtAuthorPiped})</h4>
+               <br />
+               <textarea id="thoughtPost" onChange={this.handleChange} wrap="soft" className="post">{this.state.thoughtPost}</textarea>
+               <input className="button-primary u-full-width" type="submit" value="Update Post" onClick={this.changePost} />
+             </div>
+             <div className="six columns"><p></p></div>
            </div>
-           <div className="four columns"><p></p></div>
          </div>
-       </div>
-     );
+       );
+     } else {
+       return (
+         <div className="container">
+           <div className="row">
+             <div className="six columns middlediv">
+               <h3 className="title-thoughtview">{this.props.thoughtIdPiped}</h3>
+               <h4 className="author">by {this.state.vanityName} ({this.props.thoughtAuthorPiped})</h4>
+               <br />
+               <textarea wrap="soft" disabled className="post">{this.state.thoughtPost}</textarea>
+             </div>
+             <div className="six columns"><p></p></div>
+           </div>
+         </div>
+       )
+     }
    }
 
    componentDidMount () {
@@ -189,7 +258,7 @@ class MainView extends Component {
   render() {
       if (this.state.rerender) {
         return (
-          <ThoughtView thoughtIdPiped={this.state.thoughtId} thoughtAuthorPiped={this.state.thoughtAuthor} />
+          <ThoughtView thoughtIdPiped={this.state.thoughtId} thoughtAuthorPiped={this.state.thoughtAuthor}/>
         )
       } else {
         return (
@@ -204,7 +273,7 @@ class MainView extends Component {
                     <input id="navToId" className="button-primary u-full-width navToId-button" type="submit" value="Enter" onClick={this.joinThought} />
                   </div>
                   <div id="createThoughtDiv" className="six columns">
-                    <input id="createNewThought" className="button-primary u-full-width createNewThought-button" type="submit" value="Create" onClick={this.createThought} />
+                    <input id="createNewThought" className="button-primary u-full-width purple-button" type="submit" value="Create" onClick={this.createThought} />
                   </div>
                   <input value={this.state.vanityName} onChange={this.handleChange} className="id-input u-full-width" type="text" placeholder="gaben" id="idNameInput" />
                   <input className="button-primary u-full-width" type="submit" value="Change Name" onClick={this.changeName} />

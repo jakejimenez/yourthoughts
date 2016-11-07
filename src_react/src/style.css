@@ -58,10 +58,26 @@ body {
   border-color: #FF1744 !important;
 }
 
-.createNewThought-button {
+.purple-button {
   background-color: #0D47A1 !important;
   border-color: #0D47A1 !important;
 }
+
+.post {
+  background-color: inherit;
+  border: 1px solid black;
+  width: 100%;
+  resize: none;
+  height: 200px;
+}
+.post:focus {
+  background-color: inherit;
+  border: 1px solid black;
+  width: 100%;
+  resize: none;
+  height: 200px;
+}
+
 
 @-webkit-keyframes background {
   0% { background-color: #f99; }
