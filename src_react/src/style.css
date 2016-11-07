@@ -77,7 +77,12 @@ body {
   resize: none;
   height: 200px;
 }
-
+.comments-title {
+  font-family: 'CircularStdBold', sans-serif;
+  text-align: center;
+  padding-bottom: 3%;
+  padding-top: 3%;
+}
 
 @-webkit-keyframes background {
   0% { background-color: #f99; }

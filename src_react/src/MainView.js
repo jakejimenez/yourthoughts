@@ -52,7 +52,8 @@ if (Cookies.get('uid') === null || Cookies.get('uid') === undefined || Cookies.g
        thoughtId: '',
        thoughtPost: '',
        thoughtAuthor: '',
-       updatedPost: ''
+       updatedPost: '',
+       thoughtComments: {}
      }
 
      this.handleChange = this.handleChange.bind(this);
@@ -82,17 +83,7 @@ if (Cookies.get('uid') === null || Cookies.get('uid') === undefined || Cookies.g
    componentWillMount () {
      console.log('DOM will load...')
 
-     // Check if vanity name is active.
      var self = this;
-     db.ref('users/'+Cookies.get('uid')).once('value', (snapshot) => {
-       if (snapshot.hasChild('name')) {
-         self.setState({
-           vanityName: snapshot.val().name
-         })
-       } else {
-         vanityName: 'This user has no username.'
-       }
-     })
 
      db.ref('thoughts/'+self.props.thoughtIdPiped).once('value', (snapshot) => {
        if (snapshot.hasChild('post')) {
@@ -105,12 +96,36 @@ if (Cookies.get('uid') === null || Cookies.get('uid') === undefined || Cookies.g
          })
        }
 
+       if (snapshot.hasChild('comments')) {
+         self.setState({
+           thoughtComments: {}
+         })
+         console.log(self.state.comments)
+       } else {
+         self.setState({
+           thoughtComments: snapshot.val().comments
+         })
+       }
+
        if (snapshot.hasChild('author')) {
          self.setState({
            thoughtAuthor: snapshot.val().author
          })
+         db.ref('users/'+snapshot.val().author).once('value', (snapshot) => {
+           if (snapshot.hasChild('name')) {
+             self.setState({
+               vanityName: snapshot.val().name
+             })
+           } else {
+             vanityName: 'This user has no username.'
+           }
+         })
        }
      })
+   }
+
+   addComment() {
+
    }
 
    render() {
@@ -127,7 +142,9 @@ if (Cookies.get('uid') === null || Cookies.get('uid') === undefined || Cookies.g
                <textarea id="thoughtPost" onChange={this.handleChange} wrap="soft" className="post">{this.state.thoughtPost}</textarea>
                <input className="button-primary u-full-width" type="submit" value="Update Post" onClick={this.changePost} />
              </div>
-             <div className="six columns"><p></p></div>
+             <div className="six columns">
+              <CommentView thoughtId={this.props.thoughtIdPiped} />
+             </div>
            </div>
          </div>
        );
@@ -153,6 +170,53 @@ if (Cookies.get('uid') === null || Cookies.get('uid') === undefined || Cookies.g
    }
 
  }
+
+class CommentView extends Component {
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      comments: {}
+    }
+  }
+
+  /*componentWillMount() {
+    var self = this;
+    db.ref('thoughts/'+self.props.thoughtIdPiped).once('value', (snapshot) => {
+      console.log(snapshot.val(''))
+      if (snapshot.hasChild('comment')) {
+        self.setState({
+          comments: snapshot.val().comment
+        })
+      } else {
+        self.setState({
+          comments: {comments:0}
+        })
+      }
+    })
+  }*/
+
+  render () {
+    var {comments} = this.state;
+    return (
+      <div>
+        <br />
+        <h3 className="title-thoughtview">Comments: {comments.comments}</h3>
+        <ul>
+        {
+          Object.keys(comments).forEach((key) => {
+            console.log(comments)
+            return (
+              <li>{key}</li>
+            )
+          })
+        }
+        </ul>
+      </div>
+    );
+  }
+}
 
 class MainView extends Component {
 
@@ -184,7 +248,7 @@ class MainView extends Component {
   joinThought() {
     var self = this;
     var {thoughtId, rerender} = this.state;
-    Cookies.set('thougtId', thoughtId)
+    //Cookies.set('thoughtId', thoughtId)
     db.ref('thoughts/'+this.state.thoughtId).once('value', function(snapshot) {
       if (snapshot.hasChild('title')) {
         swal(
@@ -218,11 +282,6 @@ class MainView extends Component {
             )
       } else {
         Cookies.set('thoughtId', thoughtId);
-        /*db.ref('users/'+Cookies.get('uid')).once('value', function(snapshot) {
-          if (snapshot.hasChild('name')) {
-            Cookies.set('vanityName', snapshot.val().name)
-          }
-        })*/
         db.ref('thoughts/'+thoughtId).set({
           title: '',
           titleCanBeChanged: true,
