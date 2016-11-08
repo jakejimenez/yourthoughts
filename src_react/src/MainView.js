@@ -3,12 +3,11 @@ import './style.css';
 
 // Make sure these paths are correct.
 import './skeleton.min.css';
-import './sweetalert2.min.css';
 
 // Import npm modules
 import * as firebase from 'firebase';
 import * as Cookies from 'js-cookie';
-import { default as swal } from 'sweetalert2';
+import * as Push from 'push.js';
 
 // Setup
 var config = {
@@ -58,6 +57,7 @@ if (Cookies.get('uid') === null || Cookies.get('uid') === undefined || Cookies.g
 
      this.handleChange = this.handleChange.bind(this);
      this.changePost = this.changePost.bind(this);
+     this.handlePostPress = this.handlePostPress.bind(this);
    }
 
    handleChange() {
@@ -65,17 +65,29 @@ if (Cookies.get('uid') === null || Cookies.get('uid') === undefined || Cookies.g
      this.setState({updatedPost: textareaPost});
    }
 
+   handlePostPress(e) {
+   if (e.key === 'Enter') {
+     console.log(e.key)
+     this.changePost()
+   }
+ }
+
    changePost() {
      var self = this;
      db.ref('thoughts/'+self.props.thoughtIdPiped).once('value', (snapshot) => {
        if (snapshot.hasChild('post')) {
          db.ref('thoughts/'+self.props.thoughtIdPiped+'/post').set(self.state.updatedPost)
+         Push.create(self.props.thoughtIdPiped, {
+           body: 'Your post has been updated.',
+           icon: 'https://cdn3.iconfinder.com/data/icons/brain-games/1042/Brain-Games.png',
+           timeout: 6000
+         })
        } else {
-         swal(
-             'Awww!',
-             'Some sort of error occured.',
-             'error'
-             )
+         Push.create(self.props.thoughtIdPiped, {
+           body: 'An error occured...',
+           icon: 'https://cdn3.iconfinder.com/data/icons/brain-games/1042/Brain-Games.png',
+           timeout: 6000
+         })
        }
      })
    }
@@ -125,10 +137,6 @@ if (Cookies.get('uid') === null || Cookies.get('uid') === undefined || Cookies.g
      })
    }
 
-   addComment() {
-
-   }
-
    render() {
 
      if (this.state.thoughtAuthor === Cookies.get('uid')) {
@@ -140,7 +148,7 @@ if (Cookies.get('uid') === null || Cookies.get('uid') === undefined || Cookies.g
                <h3 className="title-thoughtview">{this.props.thoughtIdPiped}</h3>
                <h4 className="author">by {this.state.vanityName} ({this.props.thoughtAuthorPiped})</h4>
                <br />
-               <textarea id="thoughtPost" onChange={this.handleChange} wrap="soft" className="post" defaultValue={this.state.thoughtPost}/>
+               <textarea id="thoughtPost" onChange={this.handleChange} onKeyPress={this.handlePostPress} wrap="soft" className="post" defaultValue={this.state.thoughtPost}/>
                <input className="button-primary u-full-width" type="submit" value="Update Post" onClick={this.changePost} />
              </div>
              <div className="six columns middlediv">
@@ -178,41 +186,62 @@ class CommentView extends Component {
     super(props);
 
     this.state = {
-      comments: {}
+      comments: [],
+      newComment: ''
     }
+
+    this.handleChange = this.handleChange.bind(this);
+    this.addComment = this.addComment.bind(this);
+    this.handleNewComment = this.handleNewComment.bind(this);
   }
 
-  /*componentWillMount() {
+  handleNewComment(comment) {
+    console.log(comment.text);
+  }
+
+  componentWillMount() {
     var self = this;
     db.ref('thoughts/'+self.props.thoughtIdPiped).once('value', (snapshot) => {
-      console.log(snapshot.val(''))
-      if (snapshot.hasChild('comment')) {
+      if (snapshot.hasChild('comments')) {
         self.setState({
-          comments: snapshot.val().comment
+          comments: JSON.parse(snapshot.val().comments)
         })
-      } else {
-        self.setState({
-          comments: {comments:0}
+      } else (
+        Push.create('Awww', {
+          body: 'There are no comments for this post',
+          icon: 'https://cdn3.iconfinder.com/data/icons/brain-games/1042/Brain-Games.png',
+          timeout: 6000
         })
-      }
+      )
     })
-  }*/
+  }
+
+  handleChange() {
+    var {comments} = this.state;
+
+    var commentData = document.getElementById('commentInput').value;
+    this.setState({
+      newComment: commentData
+    })
+  }
+
+  addComment() {
+
+  }
 
   render () {
     var {comments} = this.state;
+    var self = this;
     return (
       <div>
+        <h3 className="title-thoughtview">Add Comment</h3>
+          <textarea id="commentInput" onChange={this.handleChange} className="comments-box" />
+          <input className="button-primary u-full-width" type="submit" onClick={this.addComment} value="Post Comment"/>
+          <br/>
+          <br/>
         <h3 className="title-thoughtview">Comments: {comments.comments}</h3>
-        <ul>
-        {
-          Object.keys(comments).forEach((key) => {
-            console.log(comments)
-            return (
-              <li>{key}</li>
-            )
-          })
-        }
-        </ul>
+          <br/>
+
       </div>
     );
   }
@@ -235,6 +264,7 @@ class MainView extends Component {
     this.joinThought = this.joinThought.bind(this);
     this.createThought = this.createThought.bind(this);
     this.changeName = this.changeName.bind(this);
+    this.handleKeyPress = this.handleKeyPress.bind(this);
   }
 
   handleChange() {
@@ -245,27 +275,34 @@ class MainView extends Component {
     this.setState({vanityName: inputNameData});
   }
 
+  handleKeyPress(e) {
+  if (e.key === 'Enter') {
+    console.log(e.key)
+    this.joinThought()
+  }
+}
+
   joinThought() {
     var self = this;
     var {thoughtId, rerender} = this.state;
     //Cookies.set('thoughtId', thoughtId)
     db.ref('thoughts/'+this.state.thoughtId).once('value', function(snapshot) {
       if (snapshot.hasChild('title')) {
-        swal(
-            'Success!',
-            snapshot.key + ' does exist!',
-            'success'
-            )
+        Push.create(snapshot.key, {
+          body: 'It exists!',
+          icon: 'https://cdn3.iconfinder.com/data/icons/brain-games/1042/Brain-Games.png',
+          timeout: 6000
+        })
         self.setState({
           rerender: true,
           thoughtAuthor: snapshot.val().author
         })
       } else {
-        swal(
-            'Awww!',
-            snapshot.key + ' does not exist!',
-            'error'
-            )
+        Push.create(snapshot.key, {
+          body: snapshot.key+' doesn\'t exist.',
+          icon: 'https://cdn3.iconfinder.com/data/icons/brain-games/1042/Brain-Games.png',
+          timeout: 6000
+        })
       }
     })
   }
@@ -275,11 +312,11 @@ class MainView extends Component {
     var {thoughtId, rerender} = this.state;
     db.ref('thoughts/'+this.state.thoughtId).once('value', function(snapshot) {
       if (snapshot.hasChild('title')) {
-        swal(
-            'Aww!',
-            snapshot.key + ' already exists!',
-            'error'
-            )
+        Push.create(snapshot.key, {
+          body: 'Already exists!',
+          icon: 'https://cdn3.iconfinder.com/data/icons/brain-games/1042/Brain-Games.png',
+          timeout: 6000
+        })
       } else {
         Cookies.set('thoughtId', thoughtId);
         db.ref('thoughts/'+thoughtId).set({
@@ -294,11 +331,11 @@ class MainView extends Component {
           rerender: true,
           thoughtAuthor: Cookies.get('uid')
         })
-        swal(
-            'Success!',
-            thoughtId + ' has now been created!',
-            'success'
-            )
+        Push.create(thoughtId, {
+          body: 'It has been created!',
+          icon: 'https://cdn3.iconfinder.com/data/icons/brain-games/1042/Brain-Games.png',
+          timeout: 6000
+        })
       }
     })
   }
@@ -326,7 +363,7 @@ class MainView extends Component {
               <div className="four columns"><p></p></div>
               <div className="four columns middlediv">
                 <h3 className="middlediv-title"><span className="first-part-title">Your</span><span className="second-part-title">Thoughts</span> 💡</h3>
-                <input value={this.state.thoughtId} onChange={this.handleChange} className="id-input u-full-width" type="text" placeholder="#ID" id="idInput" />
+                <input value={this.state.thoughtId} onChange={this.handleChange} className="id-input u-full-width" type="text" placeholder="#ID" id="idInput" onKeyPress={this.handleKeyPress}/>
                 <div className="row">
                   <div className="six columns">
                     <input id="navToId" className="button-primary u-full-width navToId-button" type="submit" value="Enter" onClick={this.joinThought} />

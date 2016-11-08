@@ -82,6 +82,22 @@ body {
   text-align: center;
   font-size: 25px;
 }
+.comments-box {
+  font-family: 'CircularStdBold', sans-serif;
+  background-color: inherit;
+  border: 1px solid black;
+  resize: none;
+  color: black;
+  width: 100%;
+}
+.comments-box:focus {
+  font-family: 'CircularStdBook', sans-serif;
+  background-color: inherit;
+  border: 1px solid black;
+  resize: none;
+  color: black;
+  width: 100%;
+}
 
 @-webkit-keyframes background {
   0% { background-color: #f99; }
