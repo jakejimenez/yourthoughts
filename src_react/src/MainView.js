@@ -143,7 +143,7 @@ if (Cookies.get('uid') === null || Cookies.get('uid') === undefined || Cookies.g
                <textarea id="thoughtPost" onChange={this.handleChange} wrap="soft" className="post" defaultValue={this.state.thoughtPost}/>
                <input className="button-primary u-full-width" type="submit" value="Update Post" onClick={this.changePost} />
              </div>
-             <div className="six columns">
+             <div className="six columns middlediv">
               <CommentView thoughtId={this.props.thoughtIdPiped} />
              </div>
            </div>
@@ -157,9 +157,9 @@ if (Cookies.get('uid') === null || Cookies.get('uid') === undefined || Cookies.g
                <h3 className="title-thoughtview">{this.props.thoughtIdPiped}</h3>
                <h4 className="author">by {this.state.vanityName} ({this.props.thoughtAuthorPiped})</h4>
                <br />
-               <textarea wrap="soft" disabled className="post">{this.state.thoughtPost}</textarea>
+               <textarea wrap="soft" disabled className="post" value={this.state.thoughtPost}/>
              </div>
-             <div className="six columns"><p></p></div>
+             <div className="six columns middlediv"><p></p></div>
            </div>
          </div>
        )
@@ -202,7 +202,6 @@ class CommentView extends Component {
     var {comments} = this.state;
     return (
       <div>
-        <br />
         <h3 className="title-thoughtview">Comments: {comments.comments}</h3>
         <ul>
         {

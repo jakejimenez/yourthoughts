@@ -80,8 +80,7 @@ body {
 .comments-title {
   font-family: 'CircularStdBold', sans-serif;
   text-align: center;
-  padding-bottom: 3%;
-  padding-top: 3%;
+  font-size: 25px;
 }
 
 @-webkit-keyframes background {
