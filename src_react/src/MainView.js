@@ -90,6 +90,7 @@ if (Cookies.get('uid') === null || Cookies.get('uid') === undefined || Cookies.g
          self.setState({
            thoughtPost: snapshot.val().post
          })
+         console.log(snapshot.val().post)
        } else {
          self.setState({
            thoughtPost: 'This post has no content...'
@@ -139,7 +140,7 @@ if (Cookies.get('uid') === null || Cookies.get('uid') === undefined || Cookies.g
                <h3 className="title-thoughtview">{this.props.thoughtIdPiped}</h3>
                <h4 className="author">by {this.state.vanityName} ({this.props.thoughtAuthorPiped})</h4>
                <br />
-               <textarea id="thoughtPost" onChange={this.handleChange} wrap="soft" className="post">{this.state.thoughtPost}</textarea>
+               <textarea id="thoughtPost" onChange={this.handleChange} wrap="soft" className="post" defaultValue={this.state.thoughtPost}/>
                <input className="button-primary u-full-width" type="submit" value="Update Post" onClick={this.changePost} />
              </div>
              <div className="six columns">
